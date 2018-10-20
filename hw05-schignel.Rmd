@@ -5,6 +5,7 @@ date: "October 19, 2018"
 output:
   github_document:
     toc: yes
+always_allow_html: yes
 ---
 
 ## Overview
@@ -42,6 +43,7 @@ suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(forcats))
+suppressPackageStartupMessages(library(plotly))
 suppressPackageStartupMessages(library(gapminder))
 ```
 
@@ -147,6 +149,8 @@ write.csv(America_pop_2007, file = "America_pop_2007_5M.csv", row.names = FALSE)
 
 We can see that the .csv was successfully exported to the project folder and the data are correct in Microsoft Excel. 
 
+Does its structure survive if we re-import it into R?
+
 #### Re-import from .csv
 ```{r read csv}
 America_pop_2007_READ <- read.csv("America_pop_2007_5M.csv")
@@ -157,9 +161,75 @@ Great! The data are still arranged by intrecing population, so it surved the wri
 **Note**: To write or read a .csv outside of the project folder, you need to enter in the full file path.
 
 
+## Part 3: Visualization design
+
+In this section I reproduce an old figure and give it some new life through the techniques I've learned in the last couple of weeks of lecture. 
+
+#### Old Graph
+Below is the code and graph ("as is") for a figure I was very proud of from Homework 02:
+```{r old graph}
+old_graph <- select(gapminder, gdpPercap, lifeExp, pop, year, continent) %>% #subsetting data
+  filter(year > 1957, continent=="Europe"|continent=="Africa") %>% #filter by criteria
+  ggplot(aes(lifeExp, gdpPercap))+ #piped to ggplot
+  geom_point(aes(color=continent, size=pop, alpha=0.1)) + # add aesthetics 
+  xlab("Life Expectancy")+
+  ylab("GDP per Capita")
+old_graph
+```
 
 
+#### New Graph
+```{r new graph}
+new_graph <- select(gapminder, gdpPercap, lifeExp, pop, year, continent) %>% 
+  filter(year > 1957, continent == "Europe"|continent == "Africa") %>%   ggplot(aes(lifeExp, gdpPercap)) +
+  geom_point(aes(color = continent, size = pop, alpha = 0.1)) +
+  labs(title = "Life expectancy for each continent", 
+       x = "Life Expectancy", 
+       y = "GDP per Capita") + 
+  theme_bw()+
+  theme(axis.text.x  = element_text(vjust=0.6, size=10),
+        axis.text = element_text(size = 10)) +
+  scale_colour_brewer(palette = "Set1") + # use brewer scheme
+  geom_smooth(method="lm") #add a linear regression line
+new_graph
+```
 
 
+#### Export to plotly
+```{r plotly}
+new_graph_plotly <- new_graph
+ggplotly(new_graph_plotly) 
+
+```
+
+#### Reflections
+
+One of the first changes I made was to remove the unnecessary comments, as these did not provide extra information and make the code difficult to read, violating the recommendations by Hadley Wickham in the [tidyverse style guide](http://style.tidyverse.org/). Also in line with the style guide, I added spaces before and after each of the "=" and "+" in order to improve legibility. 
+
+I also added a linear regression line, which is particularly nice to include on the plotly plot, as it allows you to identify the predicted values from the model interactively. I could see this--along with the fact that plotly provide access to the specific attribute information for each point--being extremely useful for exploring and presenting data in the future.  
+
+
+## Part 4: Writing figures to file
+
+With `ggsave()` it's easy to export a figure to as a file on your local computer: 
+```{r ggsave}
+ggsave("new_graph.png", new_graph)
+```
+
+We also may want to adjust the dimensions and resolution:
+```{r ggsave dim}
+ggsave("new_graph_5x4.png", width = 5, height = 4, dpi = 150)
+```
+
+We can also save to vector format with .pdf
+```{r ggsave pdf}
+ggsave("new_graph.pdf", new_graph)
+```
+
+The ggsave( ) function will, by default, save the most recent plot in R. To save a different image, we have to make this explicit in the ggsave code. For example, if we wanted to save the old graph (see above), we would make the following changes to the code:
+
+```{r ggsave old}
+ggsave("old_graph.png", plot = old_graph)
+```
 
 
