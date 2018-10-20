@@ -5,7 +5,11 @@ October 19, 2018
 
 -   [Overview](#overview)
 -   [Part 1: Factor management](#part-1-factor-management)
-    -   [Exercise using gapminder](#exercise-using-gapminder)
+-   [Exercise using gapminder](#exercise-using-gapminder)
+    -   [Load libraries](#load-libraries)
+    -   [Look at the data](#look-at-the-data)
+    -   [Drop Oceania](#drop-oceania)
+    -   [Reorder the levels](#reorder-the-levels)
 
 Overview
 --------
@@ -29,7 +33,8 @@ Factors are “truly categorical” variables. They are vectors that:
 -   have integers underneath (i.e. code for computer to keep track)
 -   have different levels (i.e., number of unique categories/classes)
 
-### Exercise using gapminder
+Exercise using gapminder
+------------------------
 
 We will use the gapminder dataset to explore working with factors in the following ways:
 
@@ -41,6 +46,7 @@ We will use the gapminder dataset to explore working with factors in the followi
 ``` r
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(forcats))
 suppressPackageStartupMessages(library(gapminder))
@@ -74,27 +80,28 @@ levels(gapminder$continent)
 
     ## [1] "Africa"   "Americas" "Asia"     "Europe"   "Oceania"
 
-Next we filter the data:
+Next we filter the data. We can remove unused levels at the same time by piping the filter results into the `droplevels()` function:
 
 ``` r
-gap_no_Oc <- gapminder %>% 
-  filter(continent != "Oceania")
+gap_sans_OCE <- gapminder %>% 
+  filter(continent != "Oceania") %>% 
+  droplevels()
 ```
 
-And confirm there are no longer any "Oceania" rows:
+Now let's confirm there are no longer any "Oceania" rows:
 
 ``` r
-NROW(gap_no_Oc %>% 
+NROW(gap_sans_OCE %>% 
   filter(continent == "Oceania"))
 ```
 
     ## [1] 0
 
-We can also check how many rows were dropped:
+Looks good! We can also check how many rows were dropped:
 
 ``` r
 # Subtract to find difference
-NROW(gapminder) - NROW(gap_no_Oc)
+NROW(gapminder) - NROW(gap_sans_OCE)
 ```
 
     ## [1] 24
@@ -102,16 +109,54 @@ NROW(gapminder) - NROW(gap_no_Oc)
 We have now confirmed that all "Oceania" rows (n=24) have been removed from the original dataset. What about the levels?
 
 ``` r
-levels(gap_no_Oc$continent)
+levels(gap_sans_OCE$continent)
 ```
 
-    ## [1] "Africa"   "Americas" "Asia"     "Europe"   "Oceania"
+    ## [1] "Africa"   "Americas" "Asia"     "Europe"
 
-We still have "Oceania" as an unused level in the new data frame! We can remove this using the `droplevels()` function:
+Great! We have successfully removed the unused levels.
 
-levels(gap\_no\_Oc$continent) \`\`\`
+#### Reorder the levels
 
-Ensuring the variable(s) you’re exploring are indeed factors, you are expected to:
+If we were to create a plot of the factor `continent`
 
-    Drop factor / levels;
-    Reorder levels based on knowledge from data.
+``` r
+cont <- gap_sans_OCE$continent
+```
+
+We see that it is plotted in the order of the factor levels:
+
+``` r
+qplot(cont)
+```
+
+![](hw05-schignel_files/figure-markdown_github/unnamed-chunk-3-1.png)
+
+Suppose we wanted to plot life expectancy in Asia.
+
+``` r
+gap_asia <- gapminder %>% 
+  filter(continent == "Asia") %>% 
+  droplevels()
+```
+
+``` r
+gap_asia %>% 
+  group_by(country) %>% 
+  summarize(maxlifeExp = max(lifeExp))
+```
+
+    ## # A tibble: 33 x 2
+    ##    country          maxlifeExp
+    ##    <fct>                 <dbl>
+    ##  1 Afghanistan            43.8
+    ##  2 Bahrain                75.6
+    ##  3 Bangladesh             64.1
+    ##  4 Cambodia               59.7
+    ##  5 China                  73.0
+    ##  6 Hong Kong, China       82.2
+    ##  7 India                  64.7
+    ##  8 Indonesia              70.6
+    ##  9 Iran                   71.0
+    ## 10 Iraq                   65.0
+    ## # ... with 23 more rows
