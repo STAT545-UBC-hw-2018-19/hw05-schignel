@@ -3,7 +3,7 @@ title: "Homework 05: Factor and figure management"
 author: "Stephen Chignell"
 date: "October 19, 2018"
 output:
-  html_document:
+  github_document:
     toc: yes
 always_allow_html: yes
 ---
@@ -196,9 +196,10 @@ new_graph
 
 
 #### Export to plotly
-```{r plotly}
-new_graph_plotly <- new_graph
-ggplotly(new_graph_plotly) 
+```{r plotly} 
+# commented to avoid creating destroying .md 
+#new_graph_plotly <- new_graph
+#ggplotly(new_graph_plotly) 
 
 
 ```
