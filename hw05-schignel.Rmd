@@ -75,7 +75,7 @@ gap_sans_OCE <- gapminder %>%
 ```
 
 Now let's confirm there are no longer any "Oceania" rows:
-```{r}
+```{r confirm}
 NROW(gap_sans_OCE %>% 
   filter(continent == "Oceania"))
 ```
@@ -94,32 +94,32 @@ levels(gap_sans_OCE$continent)
 
 Great! We have successfully removed the unused levels.
 
-#### Reorder the levels
+#### Reorder the levels of `country` or `continent`
 
-If we were to create a plot of the factor `continent`
-```{r}
-cont <- gap_sans_OCE$continent
+
+Suppose we wanted to plot mean life expectancy for each continent:
+
+
+```{r mean_pop}
+mean_pop <- gapminder %>%
+  group_by(continent) %>% 
+  summarize(mean.pop = mean(pop)) 
+mean_pop
+
+ggplot(mean_pop, aes(continent, mean.pop)) + 
+  geom_point()
+
 ```
 
-We see that it is plotted in the order of the factor levels:
+By default, the levels are ordered alphabetically, which does not help to highlight any patterns in the data. 
 
-```{r, fig.width=4, fig.height=1.5}
-qplot(cont)
+We can change these to ascending order using the `fct_reorder` function:
+
+```{r mean_pop ordered}
+mean_pop %>%
+  mutate(continent = fct_reorder(continent, mean.pop)) %>% 
+  ggplot(aes(continent, mean.pop)) + 
+  geom_point()
 ```
-
-Suppose we wanted to plot life expectancy in Asia. 
-
-```{r}
-gap_asia <- gapminder %>% 
-  filter(continent == "Asia") %>% 
-  droplevels()
-```
-
-```{r}
-gap_asia %>% 
-  group_by(country) %>% 
-  summarize(maxlifeExp = max(lifeExp))
-```
-
 
 

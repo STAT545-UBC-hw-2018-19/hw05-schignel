@@ -9,7 +9,7 @@ October 19, 2018
     -   [Load libraries](#load-libraries)
     -   [Look at the data](#look-at-the-data)
     -   [Drop Oceania](#drop-oceania)
-    -   [Reorder the levels](#reorder-the-levels)
+    -   [Reorder the levels of `country` or `continent`](#reorder-the-levels-of-country-or-continent)
 
 Overview
 --------
@@ -116,47 +116,42 @@ levels(gap_sans_OCE$continent)
 
 Great! We have successfully removed the unused levels.
 
-#### Reorder the levels
+#### Reorder the levels of `country` or `continent`
 
-If we were to create a plot of the factor `continent`
-
-``` r
-cont <- gap_sans_OCE$continent
-```
-
-We see that it is plotted in the order of the factor levels:
+Suppose we wanted to plot mean life expectancy for each continent:
 
 ``` r
-qplot(cont)
+mean_pop <- gapminder %>%
+  group_by(continent) %>% 
+  summarize(mean.pop = mean(pop)) 
+mean_pop
 ```
 
-![](hw05-schignel_files/figure-markdown_github/unnamed-chunk-3-1.png)
-
-Suppose we wanted to plot life expectancy in Asia.
+    ## # A tibble: 5 x 2
+    ##   continent  mean.pop
+    ##   <fct>         <dbl>
+    ## 1 Africa     9916003.
+    ## 2 Americas  24504795.
+    ## 3 Asia      77038722.
+    ## 4 Europe    17169765.
+    ## 5 Oceania    8874672.
 
 ``` r
-gap_asia <- gapminder %>% 
-  filter(continent == "Asia") %>% 
-  droplevels()
+ggplot(mean_pop, aes(continent, mean.pop)) + 
+  geom_point()
 ```
+
+![](hw05-schignel_files/figure-markdown_github/mean_pop-1.png)
+
+By default, the levels are ordered alphabetically, which does not help to highlight any patterns in the data.
+
+We can change these to ascending order using the `fct_reorder` function:
 
 ``` r
-gap_asia %>% 
-  group_by(country) %>% 
-  summarize(maxlifeExp = max(lifeExp))
+mean_pop %>%
+  mutate(continent = fct_reorder(continent, mean.pop)) %>% 
+  ggplot(aes(continent, mean.pop)) + 
+  geom_point()
 ```
 
-    ## # A tibble: 33 x 2
-    ##    country          maxlifeExp
-    ##    <fct>                 <dbl>
-    ##  1 Afghanistan            43.8
-    ##  2 Bahrain                75.6
-    ##  3 Bangladesh             64.1
-    ##  4 Cambodia               59.7
-    ##  5 China                  73.0
-    ##  6 Hong Kong, China       82.2
-    ##  7 India                  64.7
-    ##  8 Indonesia              70.6
-    ##  9 Iran                   71.0
-    ## 10 Iraq                   65.0
-    ## # ... with 23 more rows
+![](hw05-schignel_files/figure-markdown_github/mean_pop%20ordered-1.png)
