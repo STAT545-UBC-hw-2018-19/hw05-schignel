@@ -19,3 +19,91 @@ output:
 
 
 ## Part 1: Factor management
+
+**Overview of factors**
+
+Factors are “truly categorical” variables. They are vectors that:
+
+- have character entries on the surface (i.e. category/class name)
+- have integers underneath (i.e. code for computer to keep track)
+- have different levels (i.e., number of unique categories/classes)
+
+### Exercise using gapminder
+
+We will use the gapminder dataset to explore working with factors in the following ways:
+
+- Drop factor / levels
+- Reorder levels based on knowledge from data
+
+
+#### Load libraries
+
+```{r libraries}
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(forcats))
+suppressPackageStartupMessages(library(gapminder))
+```
+
+#### Look at the data
+
+```{r gap levels}
+str(gapminder)
+```
+
+This confirms that we have two factors, `country` (142 levels), and `continent` (5 levels).
+
+
+#### Drop Oceania
+
+Suppose we wanted to remove observations in the continent of **Oceania** from the dataset. 
+
+To start, we should review the names of the level using the `nlevels` function:
+
+```{r level check}
+levels(gapminder$continent)
+```
+
+Next we filter the data:
+
+```{r remove Oceania}
+gap_no_Oc <- gapminder %>% 
+  filter(continent != "Oceania")
+```
+
+And confirm there are no longer any "Oceania" rows:
+```{r}
+NROW(gap_no_Oc %>% 
+  filter(continent == "Oceania"))
+```
+
+We can also check how many rows were dropped:
+```{r difference}
+# Subtract to find difference
+NROW(gapminder) - NROW(gap_no_Oc)
+```
+
+We have now confirmed that all "Oceania" rows (n=24) have been removed from the original dataset. What about the levels?
+
+```{r check levels}
+levels(gap_no_Oc$continent)
+```
+
+We still have "Oceania" as an unused level in the new data frame! We can remove this using the `droplevels()` function:
+
+
+
+
+
+
+  levels(gap_no_Oc$continent)
+```
+
+Ensuring the variable(s) you’re exploring are indeed factors, you are expected to:
+
+    Drop factor / levels;
+    Reorder levels based on knowledge from data.
+
+
+
