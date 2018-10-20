@@ -28,8 +28,6 @@ Factors are “truly categorical” variables. They are vectors that:
 - have integers underneath (i.e. code for computer to keep track)
 - have different levels (i.e., number of unique categories/classes)
 
-## Exercise using gapminder
-
 We will use the gapminder dataset to explore working with factors in the following ways:
 
 - Drop factor / levels
@@ -104,11 +102,13 @@ Suppose we wanted to plot mean life expectancy for each continent:
 mean_pop <- gapminder %>%
   group_by(continent) %>% 
   summarize(mean.pop = mean(pop)) 
-mean_pop
+knitr::kable(mean_pop)
+```
 
+Let's plot the reordered data:
+```{r plot mean_pop}
 ggplot(mean_pop, aes(continent, mean.pop)) + 
   geom_point()
-
 ```
 
 By default, the levels are ordered alphabetically, which does not help to highlight any patterns in the data. 

@@ -5,7 +5,6 @@ October 19, 2018
 
 -   [Overview](#overview)
 -   [Part 1: Factor management](#part-1-factor-management)
--   [Exercise using gapminder](#exercise-using-gapminder)
     -   [Load libraries](#load-libraries)
     -   [Look at the data](#look-at-the-data)
     -   [Drop Oceania](#drop-oceania)
@@ -32,9 +31,6 @@ Factors are “truly categorical” variables. They are vectors that:
 -   have character entries on the surface (i.e. category/class name)
 -   have integers underneath (i.e. code for computer to keep track)
 -   have different levels (i.e., number of unique categories/classes)
-
-Exercise using gapminder
-------------------------
 
 We will use the gapminder dataset to explore working with factors in the following ways:
 
@@ -124,24 +120,25 @@ Suppose we wanted to plot mean life expectancy for each continent:
 mean_pop <- gapminder %>%
   group_by(continent) %>% 
   summarize(mean.pop = mean(pop)) 
-mean_pop
+knitr::kable(mean_pop)
 ```
 
-    ## # A tibble: 5 x 2
-    ##   continent  mean.pop
-    ##   <fct>         <dbl>
-    ## 1 Africa     9916003.
-    ## 2 Americas  24504795.
-    ## 3 Asia      77038722.
-    ## 4 Europe    17169765.
-    ## 5 Oceania    8874672.
+| continent |  mean.pop|
+|:----------|---------:|
+| Africa    |   9916003|
+| Americas  |  24504795|
+| Asia      |  77038722|
+| Europe    |  17169765|
+| Oceania   |   8874672|
+
+Let's plot the reordered data:
 
 ``` r
 ggplot(mean_pop, aes(continent, mean.pop)) + 
   geom_point()
 ```
 
-![](hw05-schignel_files/figure-markdown_github/mean_pop-1.png)
+![](hw05-schignel_files/figure-markdown_github/plot%20mean_pop-1.png)
 
 By default, the levels are ordered alphabetically, which does not help to highlight any patterns in the data.
 
