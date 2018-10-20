@@ -9,6 +9,10 @@ October 19, 2018
     -   [Look at the data](#look-at-the-data)
     -   [Drop Oceania](#drop-oceania)
     -   [Reorder the levels of `country` or `continent`](#reorder-the-levels-of-country-or-continent)
+-   [Part 2: File I/O](#part-2-file-io)
+    -   [Filter and arrange data](#filter-and-arrange-data)
+    -   [Write to .CSV](#write-to-.csv)
+    -   [Re-import from .csv](#re-import-from-.csv)
 
 Overview
 --------
@@ -152,3 +156,87 @@ mean_pop %>%
 ```
 
 ![](hw05-schignel_files/figure-markdown_github/mean_pop%20ordered-1.png)
+
+Part 2: File I/O
+----------------
+
+Let's practice exporting and importing data. Say we wanted to look at life expectancies in American countries with a population over 5,000,000 for the year 2007:
+
+#### Filter and arrange data
+
+``` r
+America_pop_2007 <- gapminder %>%
+  filter(continent == "Americas", year == 2007, pop > 5000000) %>%
+  arrange(pop) # arrange in ascending order
+```
+
+Let's view it as a table:
+
+``` r
+knitr::kable(America_pop_2007)
+```
+
+| country            | continent |  year|  lifeExp|        pop|  gdpPercap|
+|:-------------------|:----------|-----:|--------:|----------:|----------:|
+| Nicaragua          | Americas  |  2007|   72.899|    5675356|   2749.321|
+| Paraguay           | Americas  |  2007|   71.752|    6667147|   4172.838|
+| El Salvador        | Americas  |  2007|   71.878|    6939688|   5728.354|
+| Honduras           | Americas  |  2007|   70.198|    7483763|   3548.331|
+| Haiti              | Americas  |  2007|   60.916|    8502814|   1201.637|
+| Bolivia            | Americas  |  2007|   65.554|    9119152|   3822.137|
+| Dominican Republic | Americas  |  2007|   72.235|    9319622|   6025.375|
+| Cuba               | Americas  |  2007|   78.273|   11416987|   8948.103|
+| Guatemala          | Americas  |  2007|   70.259|   12572928|   5186.050|
+| Ecuador            | Americas  |  2007|   74.994|   13755680|   6873.262|
+| Chile              | Americas  |  2007|   78.553|   16284741|  13171.639|
+| Venezuela          | Americas  |  2007|   73.747|   26084662|  11415.806|
+| Peru               | Americas  |  2007|   71.421|   28674757|   7408.906|
+| Canada             | Americas  |  2007|   80.653|   33390141|  36319.235|
+| Argentina          | Americas  |  2007|   75.320|   40301927|  12779.380|
+| Colombia           | Americas  |  2007|   72.889|   44227550|   7006.580|
+| Mexico             | Americas  |  2007|   76.195|  108700891|  11977.575|
+| Brazil             | Americas  |  2007|   72.390|  190010647|   9065.801|
+| United States      | Americas  |  2007|   78.242|  301139947|  42951.653|
+
+#### Write to .CSV
+
+Let's practice exporting to a comma separated values (.csv) file:
+
+``` r
+# set row.names to FALSE to avoide creation of extra ID column
+write.csv(America_pop_2007, file = "America_pop_2007_5M.csv", row.names = FALSE) 
+```
+
+We can see that the .csv was successfully exported to the project folder and the data are correct in Microsoft Excel.
+
+#### Re-import from .csv
+
+``` r
+America_pop_2007_READ <- read.csv("America_pop_2007_5M.csv")
+knitr::kable(America_pop_2007_READ)
+```
+
+| country               | continent    |     year|     lifeExp|           pop|                                 gdpPercap|
+|:----------------------|:-------------|--------:|-----------:|-------------:|-----------------------------------------:|
+| Nicaragua             | Americas     |     2007|      72.899|       5675356|                                  2749.321|
+| Paraguay              | Americas     |     2007|      71.752|       6667147|                                  4172.838|
+| El Salvador           | Americas     |     2007|      71.878|       6939688|                                  5728.354|
+| Honduras              | Americas     |     2007|      70.198|       7483763|                                  3548.331|
+| Haiti                 | Americas     |     2007|      60.916|       8502814|                                  1201.637|
+| Bolivia               | Americas     |     2007|      65.554|       9119152|                                  3822.137|
+| Dominican Republic    | Americas     |     2007|      72.235|       9319622|                                  6025.375|
+| Cuba                  | Americas     |     2007|      78.273|      11416987|                                  8948.103|
+| Guatemala             | Americas     |     2007|      70.259|      12572928|                                  5186.050|
+| Ecuador               | Americas     |     2007|      74.994|      13755680|                                  6873.262|
+| Chile                 | Americas     |     2007|      78.553|      16284741|                                 13171.639|
+| Venezuela             | Americas     |     2007|      73.747|      26084662|                                 11415.806|
+| Peru                  | Americas     |     2007|      71.421|      28674757|                                  7408.906|
+| Canada                | Americas     |     2007|      80.653|      33390141|                                 36319.235|
+| Argentina             | Americas     |     2007|      75.320|      40301927|                                 12779.380|
+| Colombia              | Americas     |     2007|      72.889|      44227550|                                  7006.580|
+| Mexico                | Americas     |     2007|      76.195|     108700891|                                 11977.575|
+| Brazil                | Americas     |     2007|      72.390|     190010647|                                  9065.801|
+| United States         | Americas     |     2007|      78.242|     301139947|                                 42951.653|
+| Great! The data are s | till arrange |  d by in|  trecing po|  pulation, so|  it surved the write-out/read-in process.|
+
+**Note**: To write or read a .csv outside of the project folder, you need to enter in the full file path.

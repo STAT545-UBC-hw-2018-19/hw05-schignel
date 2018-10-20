@@ -122,4 +122,44 @@ mean_pop %>%
   geom_point()
 ```
 
+## Part 2: File I/O
+
+Let's practice exporting and importing data. Say we wanted to look at life expectancies in American countries with a population over 5,000,000 for the year 2007:
+
+#### Filter and arrange data
+```{r filter Americas pop}
+America_pop_2007 <- gapminder %>%
+  filter(continent == "Americas", year == 2007, pop > 5000000) %>%
+  arrange(pop) # arrange in ascending order
+```
+
+Let's view it as a table:
+```{r view pop table}
+knitr::kable(America_pop_2007)
+```
+
+#### Write to .CSV
+Let's practice exporting to a comma separated values (.csv) file:
+```{r write csv}
+# set row.names to FALSE to avoide creation of extra ID column
+write.csv(America_pop_2007, file = "America_pop_2007_5M.csv", row.names = FALSE) 
+```
+
+We can see that the .csv was successfully exported to the project folder and the data are correct in Microsoft Excel. 
+
+#### Re-import from .csv
+```{r read csv}
+America_pop_2007_READ <- read.csv("America_pop_2007_5M.csv")
+knitr::kable(America_pop_2007_READ)
+```
+Great! The data are still arranged by intrecing population, so it surved the write-out/read-in process. 
+
+**Note**: To write or read a .csv outside of the project folder, you need to enter in the full file path.
+
+
+
+
+
+
+
 
